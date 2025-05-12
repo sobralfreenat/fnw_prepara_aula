@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plano de Aula: Meios de Pagamento para E-commerce</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            line-height: 1.6; 
+            margin: 0; 
+            padding: 0; 
+            background-color: #f4f4f4; 
+            color: #333;
+            /* Default padding for desktop */
+            padding-left: 270px; 
+            transition: padding-left 0.3s ease-in-out;
+        }
+
+        #fixed-sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px; 
+            height: 100vh;
+            background-color: #e9ecef;
+            padding: 20px 15px;
+            z-index: 1001;
+            overflow-y: auto;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            border-right: 1px solid #ccc;
+            transform: translateX(0);
+            transition: transform 0.3s ease-in-out;
+        }
+        /* Class to show sidebar on mobile */
+        #fixed-sidebar.sidebar-open {
+            transform: translateX(0);
+        }
+
+        .sidebar-logo {
+            font-weight: bold;
+            font-size: 1.6em;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+        .sidebar-item {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .sidebar-item h4 {
+            font-size: 1.1em;
+            color: #3498db;
+            margin-top: 0;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        .sidebar-item .name-input,
+        .sidebar-item .url-input {
+            width: calc(100% - 16px); /* padding considered */
+            padding: 6px 8px;
+            margin-bottom: 8px;
+            font-size: 0.85em;
+        }
+        .sidebar-item .add-button,
+        .sidebar-item .demo-button {
+            padding: 7px 10px;
+            font-size: 0.85em;
+            width: 100%;
+            box-sizing: border-box;
+        }
+         .sidebar-item .demo-button {
+            margin-top: 8px; /* Space between save collection and open button */
+        }
+        .sidebar-item .collection-management {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: none; /* Removing double border */
+            flex-direction: column; /* Stack label/select and button */
+        }
+        .sidebar-item .collection-management label {
+            margin-bottom: 5px; /* Space between label and select */
+            font-size: 0.85em;
+        }
+        .sidebar-item .url-select {
+            width: 100%;
+            margin-bottom: 8px; /* Space between select and save button */
+            font-size: 0.85em;
+            padding: 6px 8px;
+        }
+        .sidebar-item .add-button {
+            margin-top: 0; /* Add button comes after select */
+        }
+
+        #sidebar-toggle-button {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1002; /* Above sidebar */
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2em;
+            display: none; /* Hidden by default, shown in media query */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* Media Query for mobile devices */
+        @media (max-width: 768px) {
+            body {
+                padding-left: 0; /* No padding when sidebar is hidden */
+            }
+            #fixed-sidebar {
+                transform: translateX(-100%); /* Hide sidebar off-screen */
+                /* box-shadow: none; /* Optional: remove shadow when hidden to prevent edge peeking */
+            }
+            #fixed-sidebar.sidebar-open {
+                transform: translateX(0); /* Bring sidebar on-screen */
+                box-shadow: 2px 0 5px rgba(0,0,0,0.2); /* Show shadow when open */
+            }
+            #sidebar-toggle-button {
+                display: block; /* Show hamburger button */
+            }
+            .container {
+                margin: 20px 15px; /* Adjust margin for smaller screens */
+                padding: 15px;
+            }
+        }
+
+        /* Ensure main container respects the sidebar */
+        .container { 
+            max-width: 850px; 
+            margin: 20px auto; 
+            background: #fff; 
+            padding: 20px 30px; 
+            border-radius: 8px; 
+            box-shadow: 0 0 15px rgba(0,0,0,0.1); 
+        }
+        h1 { color: #2c3e50; text-align: center; font-size: 1.8em; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 2px solid #3498db; }
+        .page-subtitle { 
+            text-align: center; 
+            font-size: 1.1em; 
+            color: #555; 
+            margin-top: -5px; /* Pull up closer to H1 */
+            margin-bottom: 25px; 
+            font-style: italic;
+        }
+        h2 { color: #3498db; font-size: 1.5em; margin-top: 30px; margin-bottom: 15px; border-bottom: 1px solid #eaeaea; padding-bottom: 8px; }
+        h3 { color: #2980b9; font-size: 1.25em; margin-top: 25px; margin-bottom: 10px; }
+        p { margin-bottom: 12px; }
+        ul, ol { padding-left: 25px; margin-bottom: 15px; }
+        li { margin-bottom: 8px; }
+        strong { font-weight: 600; color: #2c3e50; }
+        em { font-style: italic; color: #555; }
+        code { background-color: #ecf0f1; padding: 3px 6px; border-radius: 4px; font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace; color: #c0392b; }
+        .lesson-section { margin-bottom: 25px; }
+        .resource-placeholder {
+            background-color: #eaf5ff;
+            border: 1px dashed #aed6f1;
+            padding: 15px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            font-style: italic;
+            color: #2874a6;
+        }
+        .resource-placeholder strong { color: #1f618d; }
+        .note { font-size: 0.9em; color: #7f8c8d; margin-top: 5px;}
+
+        /* Estilos para o botão de demonstração */
+        .demo-button {
+            background-color: #3498db; /* Cor do botão */
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: background-color 0.3s ease;
+            display: inline-block;
+            margin-top: 5px;
+        }
+        .demo-button:hover {
+            background-color: #2980b9;
+        }
+
+        /* Estilos para o Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.3s ease;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            width: 400px; /* Largura definida */
+            max-width: 90%;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+        .modal-content iframe {
+            width: 100%;
+            height: 450px; /* Altura exemplo, pode ser ajustada */
+            border: none;
+            display: block; /* Para remover espaço extra abaixo do iframe */
+        }
+        .modal-close-button {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.8em;
+            line-height: 1;
+            cursor: pointer;
+            color: #777;
+        }
+        .modal-close-button:hover {
+            color: #333;
+        }
+        /* Estilo para o campo de input de URL */
+        .url-input {
+            width: calc(100% - 22px); /* Leva em conta padding e borda */
+            padding: 8px 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        .name-input {
+            width: calc(100% - 22px);
+            padding: 8px 10px;
+            margin-bottom: 5px; 
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        .action-button-group {
+            margin-bottom: 15px; /* Espaço antes dos controles da coleção */
+        }
+        .collection-management {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed #ddd;
+            display: flex; /* Para alinhar label, select e botão */
+            align-items: center; /* Alinha verticalmente os itens */
+            flex-wrap: wrap; /* Permite quebra de linha se não couber */
+        }
+        .collection-management label {
+            margin-right: 8px;
+            font-size: 0.9em;
+            color: #555;
+        }
+        .add-button, .url-select {
+            padding: 8px 10px;
+            font-size: 0.9em;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            margin-right: 5px;
+        }
+        .add-button {
+            background-color: #28a745; /* Verde para adicionar */
+            color: white;
+            cursor: pointer;
+        }
+        .add-button:hover {
+            background-color: #218838;
+        }
+        .url-select {
+            min-width: 200px; /* Para dar um tamanho inicial ao select */
+            background-color: white;
+        }
+
+        /* Sidebar Accordion styles */
+        .accordion-header {
+            background-color: #d1dce5;
+            color: #2c3e50;
+            cursor: pointer;
+            padding: 10px 12px;
+            width: 100%;
+            text-align: left;
+            border: none;
+            border-radius: 4px;
+            outline: none;
+            transition: background-color 0.3s ease;
+            font-size: 1.05em;
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 0; /* Remove bottom margin if panel follows directly */
+        }
+        .accordion-header:hover {
+            background-color: #c1cdd9;
+        }
+        .accordion-header.active {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+        .accordion-panel {
+            padding: 0 10px; /* Padding for content inside panel */
+            background-color: white;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.2s ease-out;
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+            border: 1px solid #d1dce5; /* Border to match header */
+            border-top: none;
+            margin-bottom: 15px; /* Space after the panel */
+        }
+        .accordion-panel.show {
+             padding-top: 10px; /* Add padding when shown */
+             padding-bottom: 10px;
+        }
+        .accordion-panel textarea {
+            width: calc(100% - 16px);
+            min-height: 150px;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 0.9em;
+            resize: vertical;
+        }
+    </style>
+</head>
+<body>
+    <button id="sidebar-toggle-button">&#9776;</button> <!-- Hamburger Icon -->
+
+    <div id="fixed-sidebar">
+        <div class="sidebar-logo">LOGO AQUI</div>
+        
+        <div class="sidebar-item">
+            <h4>Assistente IA</h4>
+            <input type="text" id="nameSidebarIA" class="name-input" placeholder="Nome para o Link IA">
+            <input type="text" id="urlSidebarIA" class="url-input" value="https://chat.openai.com/" placeholder="URL do Assistente IA">
+            
+            <label for="selectSidebarIA" style="font-size: 0.85em; display: block; margin-bottom: 5px; margin-top: 8px;">Carregar da Coleção:</label>
+            <select id="selectSidebarIA" class="url-select" onchange="loadUrlFromSelect('selectSidebarIA', 'urlSidebarIA', 'nameSidebarIA')">
+                <option value="">Links Salvos IA...</option>
+            </select>
+
+            <button class="add-button" style="margin-top: 8px; width: 100%; box-sizing: border-box;" onclick="addToCollection('nameSidebarIA', 'urlSidebarIA', 'selectSidebarIA', 'sidebar_ia')">Salvar Link Atual</button>
+            <button class="demo-button" onclick="handleOpenModal('urlSidebarIA')">Abrir URL do Assistente</button>
+        </div>
+
+        <!-- Accordion for New Module Content -->
+        <button class="accordion-header">Novo Conteúdo da Aula</button>
+        <div class="accordion-panel">
+            <p style="font-size:0.85em; color:#555; margin-bottom:8px;">Cole o texto do novo módulo/aula abaixo. A estrutura será identificada para gerar o conteúdo na página.</p>
+            <textarea id="newModuleTextarea" placeholder="Cole aqui o conteúdo do novo módulo/aula..."></textarea>
+            <button class="demo-button" style="width:100%; box-sizing:border-box;" onclick="generateModuleContent()">Gerar Conteúdo da Aula</button>
+        </div>
+
+        <!-- Spacer -->
+        <div style="flex-grow: 1;"></div> 
+
+        <!-- Configuration Management Section -->
+        <div style="margin-top:30px; padding-top:15px; border-top: 1px solid #ccc;">
+            <h4 style="font-size: 1.1em; color: #2c3e50; margin-bottom:10px; text-align:center;">Configurações da Página</h4>
+            <button class="demo-button" style="background-color: #28a745; width:100%; box-sizing:border-box; margin-bottom:8px;" onclick="savePageConfigAsJson()">Salvar Configuração em JSON</button>
+            <input type="file" id="loadConfigInput" accept=".json" style="display: none;">
+            <button class="demo-button" style="background-color: #17a2b8; width:100%; box-sizing:border-box;" onclick="document.getElementById('loadConfigInput').click()">Carregar Configuração de JSON</button>
+        </div>
+
+    </div>
+
+    <div class="container">
+        <h1>Módulo 1, Aula 1: Meios de Pagamento para E-commerce</h1>
+        <p class="page-subtitle">Identificação, Integração e Aplicação em Projetos</p>
+
+        <div class="lesson-section">
+            <h2>Objetivos da Aula:</h2>
+            <ul>
+                <li>Compreender os diferentes meios de pagamento disponíveis para e-commerce.</li>
+                <li>Analisar as formas de integração desses meios, diferenciando Gateways de Pagamento e Intermediadores (prós e contras).</li>
+                <li>Capacitar os alunos a definir e justificar a escolha dos meios de pagamento e formas de integração para seus projetos de e-commerce.</li>
+                <li>Visualizar como soluções de pagamento podem ser integradas em ambientes online.</li>
+            </ul>
+        </div>
+
+        <div class="lesson-section">
+            <h2>Duração Estimada:</h2>
+            <p><strong>Estimativa de Tempo Total para esta Aula:</strong> 1 a 2 horas (flexível conforme a dinâmica do grupo e profundidade das discussões).</p>
+        </div>
+
+        <div class="lesson-section">
+            <h2>Roteiro da Aula:</h2>
+            
+            <ol>
+                <li>
+                    <h3>Aquecimento e Levantamento de Conhecimento Prévio (15-20 minutos)</h3>
+                    <p><strong>Atividade:</strong> Brainstorming.</p>
+                    <p><strong>Pergunta Disparadora para os alunos:</strong> "Quais são os meios de pagamento existentes para e-commerce que vocês conhecem ou já utilizaram?"</p>
+                    <p><strong>Materiais:</strong> Flipchart ou lousa digital.</p>
+                    <p><strong>Condução:</strong> Incentivar a participação e anotar as contribuições (ex: cartão de crédito, boleto, débito, transferência, Pix, carteiras digitais).</p>
+                </li>
+
+                <li>
+                    <h3>Apresentação e Discussão de Vídeo (20-25 minutos)</h3>
+                    <p><strong>Atividade:</strong> Apresentar um vídeo sobre o tema e promover uma discussão.</p>
+                    
+                    <div class="resource-placeholder" style="padding-bottom: 5px; margin-bottom: 5px;">
+                        <p><strong>Recurso Sugerido:</strong> Vídeo "Qual a Melhor Forma de Pagamento para sua Loja Virtual?"</p>
+                        
+                        <input type="text" id="nameVideoRecurso0" class="name-input" value="Qual a Melhor Forma de Pagamento para sua Loja Virtual?" placeholder="Nome/Rótulo para o Vídeo (Ex: Melhor Forma Pagto)" oninput="updateSuggestedVideoUrlFromName()">
+                        <input type="text" id="urlVideoRecurso0" class="url-input" value="https://www.youtube.com/results?search_query=Qual+a+Melhor+Forma+de+Pagamento+para+sua+Loja+Virtual" placeholder="URL do Vídeo">
+                        
+                        <div class="collection-management" style="border-top: none; padding-top: 5px; margin-bottom: 10px; margin-top: 5px;"> 
+                            <button class="add-button" onclick="addToCollection('nameVideoRecurso0', 'urlVideoRecurso0', 'selectVideoRecurso0', 'videoRecurso')">Salvar Link Acima na Coleção</button>
+                            <label for="selectVideoRecurso0" style="margin-left: 10px;">Carregar da Coleção:</label>
+                            <select id="selectVideoRecurso0" class="url-select" onchange="loadUrlFromSelect('selectVideoRecurso0', 'urlVideoRecurso0', 'nameVideoRecurso0')">
+                                <option value="">Selecione um Vídeo Salvo...</option>
+                            </select>
+                        </div>
+
+                        <div class="action-button-group">
+                            <button class="demo-button" onclick="handleOpenModal('urlVideoRecurso0')">Abrir URL do Campo Acima</button>
+                        </div>
+                    </div>
+                    <p style="margin-top: 15px;"><strong>Discussão Pós-Vídeo com os alunos:</strong> "De acordo com o vídeo (e suas experiências), como podemos integrar esses meios de pagamento no e-commerce?"</p>
+                </li>
+
+                <li>
+                    <h3>Exposição Dialogada: Formas de Integração (25-30 minutos)</h3>
+                    <p><strong>Tópico Central:</strong> "Formas de Integração dos Meios de Pagamento".</p>
+                    <p><strong>Conteúdo a ser abordado:</strong></p>
+                    <ul>
+                        <li><strong>Gateways de Pagamento:</strong> Definição, funcionamento, vantagens (ex: maior controle, personalização) e desvantagens (ex: custo inicial, complexidade).</li>
+                        <li><strong>Intermediadores de Pagamento (Subadquirentes):</strong> Definição, funcionamento, vantagens (ex: facilidade de integração, menor burocracia) e desvantagens (ex: taxas por transação, menor personalização).</li>
+                        <li>Mencionar exemplos de mercado para cada um.</li>
+                    </ul>
+                    <p><strong>Condução:</strong> Expor o conteúdo, incentivar perguntas e comparar as opções.</p>
+                </li>
+
+                <li>
+                    <h3>Atividade Prática para os Alunos (20-30 minutos)</h3>
+                    <p><strong>Atividade:</strong> Trabalho com os projetos de e-commerce dos alunos (individual ou em grupo).</p>
+                    <p><strong>Tarefa para os alunos:</strong> "Com base no que foi discutido e no perfil do mercado de atuação dos seus projetos, definam:</p>
+                    <ol>
+                        <li>Quais meios de pagamento pretendem oferecer?</li>
+                        <li>Qual forma de integração (Gateway ou Intermediador) seria mais adequada para o estágio inicial do projeto? Justifiquem as escolhas."</li>
+                    </ol>
+                </li>
+            </ol>
+        </div>
+
+        <div class="lesson-section">
+            <h2>Recursos Visuais / Demonstrações (Sugestões):</h2>
+            <p><em>Para enriquecer a explanação, considere usar os seguintes tipos de demonstrações visuais. Cole aqui as URLs dos recursos escolhidos.</em></p>
+
+            <div class="resource-placeholder">
+                <p><strong>Demonstração Visual 1: Integração de Soluções Externas (Ex: via <code>iframe</code>)</strong></p>
+                <p>Ao explicar Gateways e Intermediadores, pode ser útil mostrar visualmente como uma plataforma online pode "embarcar" soluções externas (como um checkout de pagamento) usando, por exemplo, a técnica de <code>iframe</code>.</p>
+                
+                <input type="text" id="nameRecurso1" class="name-input" placeholder="Nome/Rótulo para o Link (Ex: Vídeo iFrame)">
+                <input type="text" id="urlRecurso1" class="url-input" placeholder="Termos para busca no Google (Ex: iframe em ação)">
+                
+                <div class="collection-management" style="border-top: none; padding-top: 0; margin-bottom: 10px;"> 
+                    <button class="add-button" onclick="addToCollection('nameRecurso1', 'urlRecurso1', 'selectRecurso1', 'recurso1')">Salvar Link Acima na Coleção</button>
+                    <label for="selectRecurso1" style="margin-left: 10px;">Carregar da Coleção:</label>
+                    <select id="selectRecurso1" class="url-select" onchange="loadUrlFromSelect('selectRecurso1', 'urlRecurso1', 'nameRecurso1')">
+                        <option value="">Selecione um Link Salvo...</option>
+                    </select>
+                </div>
+
+                <div class="action-button-group">
+                    <button class="demo-button" onclick="handleOpenModal('urlRecurso1')">Abrir URL do Campo Acima</button>
+                </div>
+                <p class="note">Exemplo: Digite termos como "iframe em ação" ou "exemplos de checkout embarcado".</p>
+            </div>
+
+            <div class="resource-placeholder">
+                <p><strong>Demonstração Visual 2: Exemplo de Interface de Checkout</strong></p>
+                <p>Para a atividade prática dos alunos, ou para ilustrar os tipos de integração, mostrar um exemplo de como uma interface de checkout (mesmo que simulada ou um mockup) se apresentaria dentro de um ambiente de loja virtual.</p>
+                
+                <input type="text" id="nameRecurso2" class="name-input" placeholder="Nome/Rótulo para o Link (Ex: Checkout Exemplo)">
+                <input type="text" id="urlRecurso2" class="url-input" placeholder="URL do Link">
+
+                <div class="collection-management" style="border-top: none; padding-top: 0; margin-bottom: 10px;">
+                    <button class="add-button" onclick="addToCollection('nameRecurso2', 'urlRecurso2', 'selectRecurso2', 'recurso2')">Salvar Link Acima na Coleção</button>
+                    <label for="selectRecurso2" style="margin-left: 10px;">Carregar da Coleção:</label>
+                    <select id="selectRecurso2" class="url-select" onchange="loadUrlFromSelect('selectRecurso2', 'urlRecurso2', 'nameRecurso2')">
+                        <option value="">Selecione um Link Salvo...</option>
+                    </select>
+                </div>
+
+                <div class="action-button-group">
+                    <button class="demo-button" onclick="handleOpenModal('urlRecurso2')">Abrir URL do Campo Acima</button>
+                </div>
+                <p class="note">Exemplo: Um link para um mockup interativo, uma imagem de um bom exemplo de checkout, ou um vídeo de navegação.</p>
+            </div>
+            
+            <div class="resource-placeholder">
+                <p><strong>Demonstração Visual 3 (Opcional): Conceito de SAAS em Plataformas de E-commerce</strong></p>
+                <p>Se relevante, pode-se contextualizar brevemente como plataformas SAAS (Software as a Service) oferecem estruturas prontas que facilitam integrações e o desenvolvimento de lojas virtuais.</p>
+                
+                <input type="text" id="nameRecurso3" class="name-input" placeholder="Nome/Rótulo para o Link (Ex: Artigo SAAS)">
+                <input type="text" id="urlRecurso3" class="url-input" placeholder="URL do Link">
+
+                <div class="collection-management" style="border-top: none; padding-top: 0; margin-bottom: 10px;">
+                    <button class="add-button" onclick="addToCollection('nameRecurso3', 'urlRecurso3', 'selectRecurso3', 'recurso3')">Salvar Link Acima na Coleção</button>
+                    <label for="selectRecurso3" style="margin-left: 10px;">Carregar da Coleção:</label>
+                    <select id="selectRecurso3" class="url-select" onchange="loadUrlFromSelect('selectRecurso3', 'urlRecurso3', 'nameRecurso3')">
+                        <option value="">Selecione um Link Salvo...</option>
+                    </select>
+                </div>
+                
+                <div class="action-button-group">
+                    <button class="demo-button" onclick="handleOpenModal('urlRecurso3')">Abrir URL do Campo Acima</button>
+                </div>
+                <p class="note">Exemplo: Um link para um artigo explicativo conciso, um infográfico simples sobre SAAS.</p>
+            </div>
+        </div>
+
+        <div class="lesson-section">
+            <h2>Materiais Necessários para a Aula:</h2>
+            <ul>
+                <li>Computador com acesso à internet e projetor.</li>
+                <li>Flipchart ou lousa digital.</li>
+                <li>Link do vídeo sobre meios de pagamento (verificar/atualizar).</li>
+                <li>Links para os recursos visuais/demonstrativos escolhidos (preencher acima).</li>
+            </ul>
+        </div>
+
+        <div class="lesson-section">
+            <h2>Sugestões para Avaliação dos Alunos:</h2>
+            <ul>
+                <li>Participação nas discussões e no brainstorming.</li>
+                <li>Qualidade da justificativa para a escolha dos meios de pagamento e forma de integração para o projeto de e-commerce.</li>
+                <li>(Se aplicável) Apresentação do planejamento de integração.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'aulaRecursosColecao';
+        let urlCollections = {};
+
+        // Inicializa as coleções ao carregar a página
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCollectionsFromStorage();
+            populateAllSelects();
+
+            // Sidebar Toggle Functionality
+            const sidebarToggleButton = document.getElementById('sidebar-toggle-button');
+            const sidebar = document.getElementById('fixed-sidebar');
+
+            if (sidebarToggleButton && sidebar) {
+                sidebarToggleButton.addEventListener('click', function() {
+                    sidebar.classList.toggle('sidebar-open');
+                });
+            }
+
+            // Accordion Functionality
+            const accordions = document.getElementsByClassName("accordion-header");
+            for (let i = 0; i < accordions.length; i++) {
+                accordions[i].addEventListener("click", function() {
+                    this.classList.toggle("active");
+                    const panel = this.nextElementSibling;
+                    if (panel.style.maxHeight && panel.style.maxHeight !== "0px") {
+                        panel.style.maxHeight = null;
+                        panel.classList.remove("show");
+                    } else {
+                        panel.style.maxHeight = panel.scrollHeight + "px";
+                        panel.classList.add("show");
+                    }
+                });
+            }
+
+            // Placeholder for file loading
+            const loadConfigInput = document.getElementById('loadConfigInput');
+            if (loadConfigInput) {
+                loadConfigInput.addEventListener('change', loadPageConfigFromJson, false);
+            }
+        });
+
+        function loadCollectionsFromStorage() {
+            const storedCollections = localStorage.getItem(STORAGE_KEY);
+            if (storedCollections) {
+                urlCollections = JSON.parse(storedCollections);
+            } else {
+                // Inicializa se não houver nada no storage
+                urlCollections = {
+                    'recurso1': [],
+                    'recurso2': [],
+                    'recurso3': [],
+                    'videoRecurso': [], // Adiciona a nova coleção para o vídeo
+                    'sidebar_ia': [] // Collection for the IA sidebar button
+                };
+            }
+        }
+
+        function saveCollectionsToStorage() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(urlCollections));
+        }
+
+        function populateSelect(selectId, resourceKey) {
+            const selectElement = document.getElementById(selectId);
+            selectElement.innerHTML = ''; // Limpa opções existentes
+            
+            const defaultOptionText = selectElement.id.includes("Recurso1") ? "Links Salvos para Recurso 1..." : 
+                                    selectElement.id.includes("Recurso2") ? "Links Salvos para Recurso 2..." : 
+                                    selectElement.id.includes("Recurso3") ? "Links Salvos para Recurso 3..." :
+                                    selectElement.id.includes("VideoRecurso0") ? "Vídeos Salvos..." : 
+                                    selectElement.id.includes("SidebarIA") ? "Links Salvos IA..." : // For the IA sidebar button
+                                    "Selecione um Link Salvo...";
+            
+            let firstOption = document.createElement('option');
+            firstOption.value = "";
+            firstOption.textContent = defaultOptionText;
+            selectElement.appendChild(firstOption);
+
+            if (urlCollections[resourceKey]) {
+                urlCollections[resourceKey].forEach(item => { // Agora iteramos sobre objetos {name, url}
+                    const option = document.createElement('option');
+                    option.value = item.url; // O VALOR da option é a URL real
+                    option.textContent = item.name; // O TEXTO visível da option é o NOME
+                    // Guardar o nome também no dataset para fácil recuperação se necessário
+                    option.dataset.name = item.name;
+                    selectElement.appendChild(option);
+                });
+            }
+        }
+
+        function populateAllSelects() {
+            populateSelect('selectRecurso1', 'recurso1');
+            populateSelect('selectRecurso2', 'recurso2');
+            populateSelect('selectRecurso3', 'recurso3');
+            populateSelect('selectVideoRecurso0', 'videoRecurso'); 
+            populateSelect('selectSidebarIA', 'sidebar_ia'); // For the IA sidebar button
+        }
+
+        function updateSuggestedVideoUrlFromName() {
+            const nameInput = document.getElementById('nameVideoRecurso0');
+            const urlInput = document.getElementById('urlVideoRecurso0');
+            const searchTerm = nameInput.value.trim();
+            if (searchTerm) {
+                urlInput.value = `https://www.youtube.com/results?search_query=${encodeURIComponent(searchTerm)}`;
+            } else {
+                urlInput.value = 'https://www.youtube.com/results?search_query='; // Default search page if name is empty
+            }
+        }
+
+        function addToCollection(nameInputId, urlInputId, selectId, resourceKey) {
+            const nameInput = document.getElementById(nameInputId);
+            const urlInput = document.getElementById(urlInputId);
+            let name = nameInput.value.trim();
+            let contentValue = urlInput.value.trim(); // "contentValue" can be a URL or search term
+
+            if (!contentValue) {
+                const alertMessage = resourceKey === 'recurso1' ? "Por favor, insira os termos de busca." : "Por favor, insira uma URL ou termo para adicionar à coleção.";
+                alert(alertMessage);
+                urlInput.focus();
+                return;
+            }
+            if (!name) { // Se o nome não for fornecido, usar um padrão ou o conteúdo
+                name = contentValue.length > 50 ? contentValue.substring(0, 47) + "..." : contentValue; 
+            }
+            
+            let finalContentToStore = contentValue;
+            // Para recursos que não são o 'recurso1' (busca) e não são o 'videoRecurso' (que já pode ser uma URL completa)
+            // e o conteúdo não parece já ser uma URL completa, prefixar com http://
+            if (resourceKey !== 'recurso1' && !/^https?:\/\//i.test(contentValue)) {
+                finalContentToStore = 'http://' + contentValue;
+                urlInput.value = finalContentToStore; // Atualiza o input da URL com a URL formatada
+            } else if (resourceKey === 'recurso1') {
+                // Para o recurso1, o valor no input é o termo de busca, não modificar.
+            } else {
+                 // Para outros casos (como videoRecurso que já pode ser URL completa), manter como está
+                 // ou se já era uma URL completa para outros recursos.
+            }
+
+            if (!urlCollections[resourceKey]) {
+                urlCollections[resourceKey] = [];
+            }
+
+            const contentExists = urlCollections[resourceKey].some(item => item.url === finalContentToStore);
+            if (contentExists) {
+                const alertMessage = resourceKey === 'recurso1' ? "Estes termos de busca já existem na coleção." : "Este conteúdo já existe na coleção para este recurso.";
+                alert(alertMessage);
+                return;
+            }
+
+            urlCollections[resourceKey].push({ name: name, url: finalContentToStore });
+            saveCollectionsToStorage();
+            populateSelect(selectId, resourceKey);
+            
+            const successMessage = resourceKey === 'recurso1' ? "Termos de busca salvos na coleção!" : "Link salvo na coleção!";
+            alert(successMessage);
+            
+            nameInput.value = ''; // Limpa o campo de nome após adicionar
+            if (resourceKey !== 'recurso1') { // Não limpar o campo de termo de busca para recurso1
+                urlInput.value = ''; 
+            }
+        }
+
+        function loadUrlFromSelect(selectId, urlInputId, nameInputId) {
+            const selectElement = document.getElementById(selectId);
+            const urlInput = document.getElementById(urlInputId);
+            const nameInput = document.getElementById(nameInputId);
+            
+            if (selectElement.value) {
+                urlInput.value = selectElement.value; // selectElement.value é a URL
+                // Encontrar o nome correspondente na opção selecionada
+                const selectedOption = selectElement.options[selectElement.selectedIndex];
+                if (selectedOption && selectedOption.dataset.name) {
+                    nameInput.value = selectedOption.dataset.name;
+                } else if (selectedOption && selectedOption.value) {
+                    // Fallback se o dataset.name não estiver lá por algum motivo (improvável com a lógica atual)
+                    nameInput.value = selectedOption.textContent; // O textContent será o nome
+                }
+            } else {
+                // Se a opção default "Links Salvos..." for selecionada, limpar os campos
+                urlInput.value = "";
+                nameInput.value = "";
+            }
+        }
+
+        function handleOpenModal(inputId) {
+            const urlInput = document.getElementById(inputId);
+            const value = urlInput.value.trim();
+
+            if (!value) {
+                const alertMessage = inputId === 'urlRecurso1' ? "Por favor, insira os termos de busca." : "Por favor, insira uma URL no campo correspondente.";
+                alert(alertMessage);
+                urlInput.focus();
+                return;
+            }
+            
+            let urlToOpen;
+            if (inputId === 'urlRecurso1') { // Special handling for Recurso 1 (Google Search)
+                urlToOpen = `https://www.google.com/search?q=${encodeURIComponent(value)}`;
+            } else {
+                // Existing logic for other resources (direct URLs)
+                if (!/^https?:\/\//i.test(value)) {
+                    urlToOpen = 'http://' + value;
+                } else {
+                    urlToOpen = value;
+                }
+            }
+            openUrlInNewWindow(urlToOpen);
+        }
+
+        function openUrlInNewWindow(url) {
+            const windowWidth = 400;
+            const windowHeight = 800;
+            const screenWidth = window.screen.width;
+            // Tenta posicionar no canto direito. Pode variar dependendo da configuração de múltiplos monitores.
+            const windowLeft = screenWidth - windowWidth - 10; // Pequeno offset para não colar totalmente na borda
+            const windowTop = 0;
+
+            // Nome da janela (_blank para nova, ou um nome específico para reutilizar se já aberta com esse nome)
+            const windowName = '_blank'; // Ou pode ser um nome específico como 'recursoVisualWindow'
+
+            const windowFeatures = `width=${windowWidth},height=${windowHeight},left=${windowLeft},top=${windowTop},resizable=yes,scrollbars=yes`;
+
+            const newWindow = window.open(url, windowName, windowFeatures);
+
+            if (newWindow) {
+                newWindow.focus(); // Tenta focar na nova janela
+            } else {
+                alert("Não foi possível abrir a nova janela. Verifique se o seu navegador está bloqueando pop-ups.");
+            }
+        }
+
+        function savePageConfigAsJson() {
+            const pageState = {
+                urlCollections: urlCollections,
+                inputs: {
+                    // Main content resource blocks
+                    nameRecurso1: document.getElementById('nameRecurso1') ? document.getElementById('nameRecurso1').value : '',
+                    urlRecurso1: document.getElementById('urlRecurso1') ? document.getElementById('urlRecurso1').value : '',
+                    nameRecurso2: document.getElementById('nameRecurso2') ? document.getElementById('nameRecurso2').value : '',
+                    urlRecurso2: document.getElementById('urlRecurso2') ? document.getElementById('urlRecurso2').value : '',
+                    nameRecurso3: document.getElementById('nameRecurso3') ? document.getElementById('nameRecurso3').value : '',
+                    urlRecurso3: document.getElementById('urlRecurso3') ? document.getElementById('urlRecurso3').value : '',
+                    // Suggested video
+                    nameVideoRecurso0: document.getElementById('nameVideoRecurso0') ? document.getElementById('nameVideoRecurso0').value : '',
+                    urlVideoRecurso0: document.getElementById('urlVideoRecurso0') ? document.getElementById('urlVideoRecurso0').value : '',
+                    // Sidebar items
+                    nameSidebarIA: document.getElementById('nameSidebarIA') ? document.getElementById('nameSidebarIA').value : '',
+                    urlSidebarIA: document.getElementById('urlSidebarIA') ? document.getElementById('urlSidebarIA').value : '',
+                    // New module textarea
+                    newModuleTextarea: document.getElementById('newModuleTextarea') ? document.getElementById('newModuleTextarea').value : ''
+                },
+                // We could also save the dynamically generated main content HTML here later
+                // mainContentHTML: document.getElementById('main-lesson-content-area') ? document.getElementById('main-lesson-content-area').innerHTML : '' 
+            };
+
+            const jsonData = JSON.stringify(pageState, null, 2);
+            const blob = new Blob([jsonData], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'configuracao_aula.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            alert("Configuração da página salva como configuracao_aula.json");
+        }
+
+        function loadPageConfigFromJson(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const loadedState = JSON.parse(e.target.result);
+
+                        if (loadedState.urlCollections) {
+                            urlCollections = loadedState.urlCollections;
+                            populateAllSelects(); // This will refresh all dropdowns
+                        }
+
+                        if (loadedState.inputs) {
+                            const inputs = loadedState.inputs;
+                            // Restore main content resource blocks
+                            if (document.getElementById('nameRecurso1')) document.getElementById('nameRecurso1').value = inputs.nameRecurso1 || '';
+                            if (document.getElementById('urlRecurso1')) document.getElementById('urlRecurso1').value = inputs.urlRecurso1 || '';
+                            if (document.getElementById('nameRecurso2')) document.getElementById('nameRecurso2').value = inputs.nameRecurso2 || '';
+                            if (document.getElementById('urlRecurso2')) document.getElementById('urlRecurso2').value = inputs.urlRecurso2 || '';
+                            if (document.getElementById('nameRecurso3')) document.getElementById('nameRecurso3').value = inputs.nameRecurso3 || '';
+                            if (document.getElementById('urlRecurso3')) document.getElementById('urlRecurso3').value = inputs.urlRecurso3 || '';
+                            // Restore suggested video
+                            if (document.getElementById('nameVideoRecurso0')) document.getElementById('nameVideoRecurso0').value = inputs.nameVideoRecurso0 || '';
+                            if (document.getElementById('urlVideoRecurso0')) document.getElementById('urlVideoRecurso0').value = inputs.urlVideoRecurso0 || '';
+                            // Restore sidebar items
+                            if (document.getElementById('nameSidebarIA')) document.getElementById('nameSidebarIA').value = inputs.nameSidebarIA || '';
+                            if (document.getElementById('urlSidebarIA')) document.getElementById('urlSidebarIA').value = inputs.urlSidebarIA || '';
+                            // Restore new module textarea
+                            if (document.getElementById('newModuleTextarea')) document.getElementById('newModuleTextarea').value = inputs.newModuleTextarea || '';
+                        }
+                        
+                        // if (loadedState.mainContentHTML && document.getElementById('main-lesson-content-area')) {
+                        //    document.getElementById('main-lesson-content-area').innerHTML = loadedState.mainContentHTML;
+                        // }
+
+                        alert("Configuração da página carregada com sucesso!");
+                    } catch (error) {
+                        alert("Erro ao carregar o arquivo de configuração: " + error);
+                    }
+                };
+                reader.readAsText(file);
+            }
+            event.target.value = null; // Reset file input
+        }
+    </script>
+
+</body>
+</html>
